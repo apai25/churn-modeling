@@ -48,7 +48,7 @@ model.save('model')
 predictions = model.predict(X_test)
 predictions = (predictions > 0.5)
 
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
+from sklearn.metrics import confusion_matrix, f1_score
 cm = confusion_matrix(y_test, predictions)
 f1 = f1_score(y_test, predictions)
 print(cm)
