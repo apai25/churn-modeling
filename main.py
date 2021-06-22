@@ -17,11 +17,8 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 geography_encoder = OneHotEncoder(dtype=int, drop='first')
 gender_encoder = OneHotEncoder(dtype=int, drop='first')
-credit_card_encoder = OneHotEncoder(dtype=int, drop='first')
-active_encoder = OneHotEncoder(dtype=int, drop='first')
 
-ct = ColumnTransformer([('geography', geography_encoder, [1]), ('gender', gender_encoder, [2]), ('HasCrCard', credit_card_encoder, [7]), 
-                      ('IsActiveMember', active_encoder, [8])], remainder='passthrough')
+ct = ColumnTransformer([('geography', geography_encoder, [1]), ('gender', gender_encoder, [2])], remainder='passthrough')
 
 X_train = ct.fit_transform(X_train)
 X_test = ct.transform(X_test)
@@ -32,16 +29,18 @@ X_test=np.asarray(X_test).astype(np.float32)
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+from tensorflow.keras.regularizers import L2
 
 model = Sequential()
 
-model.add(Dense(units=32, activation='relu', kernel_regularizer='l2'))
-model.add(Dense(units=64, activation='relu'))
-model.add(Dense(units=64, activation='relu', kernel_regularizer='l2'))
+regularizer = L2(0.01)
+model.add(Dense(units=16, activation='relu'))
+model.add(Dense(units=32, activation='relu'))
+model.add(Dense(units=32, activation='relu'))
 model.add(Dense(units=1, activation='sigmoid'))
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=500)
+model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=300)
 
 model.save('model')
 
